@@ -14,6 +14,11 @@ module FreshBooks
     def initialize(data)
       super nil
       response = data["response"]
+
+      if response.blank?
+        response = {'error' => data}
+      end
+
       response.delete "xmlns"
       @status = response.delete "status"
       update response
