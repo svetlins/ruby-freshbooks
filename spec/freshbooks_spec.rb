@@ -1,4 +1,4 @@
-require 'lib/ruby-freshbooks'
+require 'ruby-freshbooks'
 
 def build_xml(data)
   FreshBooks::Client.build_xml data, Builder::XmlMarkup.new(:indent => 2)
@@ -56,7 +56,7 @@ describe "XML generation:" do
 end
 
 describe "FreshBooks Client" do
- describe "instantiation" do
+  describe "instantiation" do
     it "should create a TokenClient instance when Connection.new is called" do
       c = FreshBooks::Connection.new('foo.freshbooks.com', 'abcdefghijklm')
       c.should be_a(FreshBooks::TokenClient)
@@ -87,5 +87,24 @@ describe "FreshBooks Client" do
       @c.should_receive(:post, "invoice.items.add").once
       @c.invoice.lines.add
     end
+  end
+end
+
+describe "Result" do
+  it 'handles bad HTTP response without raising errors' do
+    response_body = <<~TEXT
+      <html>
+        <body>
+          <div>
+            <p>error</p>
+            <p>something went wrong with the server</p>
+          </div>
+        </body>
+      </html>
+    TEXT
+
+    response = FreshBooks::Response.new(response_body)
+
+    expect(response['error']).not_to be_empty
   end
 end

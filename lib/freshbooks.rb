@@ -15,7 +15,7 @@ module FreshBooks
       super nil
       response = data["response"]
 
-      if response.blank?
+      if response.nil? || response.empty?
         response = {'error' => data}
       end
 
